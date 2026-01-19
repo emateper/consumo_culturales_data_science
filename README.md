@@ -1,13 +1,13 @@
 # 🎭📺 Consumos Culturales en Argentina — Data Science Project
 
-Aplicación de **Data Science end‑to‑end** para analizar y predecir el consumo de **televisión** y **teatro** en Argentina utilizando datos reales de la ENCC (2022–2023).
+Proyecto **end‑to‑end de Data Science & ML Engineering** para analizar y predecir el consumo de **televisión** y **teatro** en Argentina utilizando datos reales de la ENCC (2022–2023).
 
 Incluye:
 
-* Pipeline ETL
-* Feature Engineering
-* Entrenamiento de modelos ML
-* Evaluación
+* Pipeline ETL reproducible
+* Feature Engineering avanzado (One‑Hot / CatPCA)
+* Entrenamiento y evaluación de modelos ML
+* Serving mediante **API REST (FastAPI)**
 * Aplicación interactiva en **Streamlit**
 
 ---
@@ -17,9 +17,10 @@ Incluye:
 La aplicación permite:
 
 * Entrenar modelos para TV y Teatro
-* Comparar métodos de features (OneHot / CatPCA)
-* Visualizar métricas
-* Realizar predicciones
+* Comparar métodos de features (OneHot vs CatPCA)
+* Visualizar métricas de desempeño
+* Realizar predicciones interactivas
+* Consumir el modelo vía API
 
 ---
 
@@ -32,8 +33,11 @@ Proyecto Data Science
 │   ├── streamlit_app.py
 │   └── styles.css
 │
+├── serve/                    # API REST con FastAPI
+│   └── app.py
+│
 ├── data/
-│   ├── 0_raw/                # Datos originales
+│   ├── 0_raw/                # Datos originales (ignorado por git)
 │   └── 1_interim/            # Datos procesados (ignorado por git)
 │
 ├── pipelines/
@@ -47,7 +51,7 @@ Proyecto Data Science
 │       └── model_teatro/
 │
 ├── models_pkl_tv/            # Modelos entrenados (ignorado)
-├── models_pkl_teatro/
+├── models_pkl_teatro/        # Modelos entrenados (ignorado)
 │
 ├── notebooks/                # Exploración
 ├── requirements.txt
@@ -58,14 +62,52 @@ Proyecto Data Science
 
 ## ⚙️ Tecnologías utilizadas
 
-| Área          | Herramientas                        |
-| ------------- | ----------------------------------- |
-| Lenguaje      | Python 3.10+                        |
-| Data          | Pandas, NumPy                       |
-| ML            | Scikit‑learn                        |
-| Visualización | Streamlit                           |
-| Pipelines     | sklearn Pipeline, ColumnTransformer |
-| Versionado    | Git + GitHub                        |
+### 🐍 Lenguaje y entorno
+
+* Python 3.10+
+* Entornos virtuales (venv)
+
+### 📊 Procesamiento de datos
+
+* Pandas
+* NumPy
+
+### 🤖 Machine Learning
+
+* Scikit‑learn
+
+  * RandomForestClassifier
+  * Pipeline
+  * ColumnTransformer
+  * OneHotEncoder
+  * StandardScaler
+  * CatPCA (opcional)
+
+### 🧱 Arquitectura y pipelines
+
+* Diseño modular por capas (ETL / Features / Models / Serving)
+* Patrón Pipeline
+* Tipado con Pydantic
+
+### 🌐 Serving & APIs
+
+* FastAPI
+* Uvicorn
+* OpenAPI / Swagger UI
+
+### 🖥️ Frontend analítico
+
+* Streamlit
+
+### 🧪 Experimentación
+
+* Jupyter Notebook
+
+### 🗂️ Ingeniería de software
+
+* Git & GitHub
+* Estructura profesional de proyecto
+* .gitignore para artefactos
 
 ---
 
@@ -74,26 +116,29 @@ Proyecto Data Science
 1. **ETL**
 
    * Selección de variables
-   * Renombrado
-   * Recodificación
+   * Renombrado semántico
+   * Recodificación socioeconómica
    * Variables categóricas ordenadas
 
-2. **Features**
+2. **Feature Engineering**
 
-   * OneHot Encoding
-   * Standard Scaling
-   * (Opcional) CatPCA
+   * One‑Hot Encoding
+   * Escalado estándar
+   * Reducción dimensional con CatPCA (opcional)
 
-3. **Modelos**
+3. **Modelado**
 
-   * RandomForestClassifier
-   * Modelos separados para TV y Teatro
+   * Random Forest por dominio (TV / Teatro)
+   * Split estratificado
+   * Métricas automáticas
 
-4. **App Streamlit**
+4. **Serving**
 
-   * Interfaz de entrenamiento
-   * Evaluación
-   * Predicciones
+   * API REST con endpoints de predicción, entrenamiento y métricas
+
+5. **Visualización**
+
+   * Dashboard interactivo en Streamlit
 
 ---
 
@@ -103,7 +148,7 @@ Proyecto Data Science
 
 ```bash
 git clone <repo-url>
-cd proyecto-data-science
+cd consumo_culturales_data_science
 ```
 
 ### 2️⃣ Crear entorno virtual
@@ -120,7 +165,9 @@ source .venv/bin/activate   # Linux / Mac
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Ejecutar aplicación
+---
+
+## ▶️ Ejecutar Streamlit App
 
 ```bash
 streamlit run app/streamlit_app.py
@@ -128,9 +175,23 @@ streamlit run app/streamlit_app.py
 
 ---
 
+## 🌐 Ejecutar API con FastAPI
+
+```bash
+uvicorn serve.app:app --reload
+```
+
+Abrir documentación interactiva:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
 ## 🤖 Entrenamiento de modelos
 
-Desde la app o directamente:
+Desde consola:
 
 ```bash
 python output/models/model_tv/train_tv.py
@@ -144,7 +205,36 @@ models_pkl_tv/
 models_pkl_teatro/
 ```
 
-*(Estas carpetas no se versionan)*
+*(estas carpetas no se versionan)*
+
+---
+
+## 🌐 API — Endpoints principales
+
+| Método | Endpoint | Descripción       |
+| ------ | -------- | ----------------- |
+| GET    | /        | Info general      |
+| GET    | /health  | Estado del modelo |
+| POST   | /predict | Predicción        |
+| POST   | /train   | Entrenar modelo   |
+| GET    | /metrics | Métricas          |
+
+### Ejemplo de request
+
+```json
+{
+  "features": [1.0, 0.0, 3.0, 2.0]
+}
+```
+
+### Ejemplo de response
+
+```json
+{
+  "prediction": 1,
+  "probability": 0.87
+}
+```
 
 ---
 
@@ -167,13 +257,14 @@ Variables utilizadas:
 
 ---
 
-## 🧩 Posibles mejoras futuras
+## 🧩 Roadmap / Mejoras futuras
 
 * MLflow para tracking de experimentos
 * Validación cruzada
 * XGBoost / LightGBM
 * Feature importance
 * Dockerización
+* CI/CD
 * Despliegue en la nube
 
 ---
@@ -200,4 +291,4 @@ Proyecto con fines educativos y demostrativos.
 
 ---
 
-🎯 *Proyecto diseñado con estructura profesional orientada a entornos reales de Data Science & MLOps.*
+🎯 *Proyecto diseñado con estructura profesional orientada a entornos reales de Data Science, Machine Learning Engineering y MLOps.*
