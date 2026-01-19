@@ -7,7 +7,7 @@ En este Script voy a limpiar, transformar y preparar los datos para el modelado.
 
 
 
-#Path, una clase moderna de Python para manejar rutas de archivos y carpetas de forma portable (funciona igual en Windows, Linux, Mac).
+#Path, una clase de Python para manejar rutas de archivos y carpetas de forma portable (funciona igual en Windows, Linux, Mac).
 from pathlib import Path
 import pandas as pd
 
@@ -89,6 +89,11 @@ def renombrar_columnas(datos: pd.DataFrame) -> pd.DataFrame:
         DataFrame con la columna recodificada.
 """
 def recodificar_nivel_socioeconomico(datos: pd.DataFrame) -> pd.DataFrame:
+    #validacion
+    if "Nivel_Socioeconomico" not in datos.columns:
+        raise ValueError("La columna 'Nivel_Socioeconomico' no existe en el DataFrame.")
+    elif not datos["Nivel_Socioeconomico"].isin(["ABC1", "C2", "C3", "D1", "D2E"]).all():
+        raise ValueError("Los valores de 'Nivel_Socioeconomico' no coinciden con los esperados.")
 
     mapeo = {
         "ABC1": "Clase_alta",

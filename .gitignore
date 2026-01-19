@@ -1,7 +1,14 @@
+# Modelos entrenados
+output/models_pkl_tv/
+output/models_pkl_teatro/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+./data/ # Directorio de datos
+
 
 # C extensions
 *.so
