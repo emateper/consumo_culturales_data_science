@@ -49,7 +49,16 @@ def train_tv():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    model_tv = RandomForestClassifier(random_state=42)
+    model_tv = RandomForestClassifier(
+    n_estimators=300,
+    max_depth=8,
+    min_samples_leaf=10,
+    min_samples_split=10,
+    max_features="sqrt",
+    class_weight="balanced",
+    random_state=42,
+    n_jobs=-1
+)
     model_tv.fit(X_train, y_train)
 
     y_pred = model_tv.predict(X_test)
@@ -64,3 +73,6 @@ def train_tv():
     )
 
     return model_tv
+
+if __name__ == "__main__":
+    train_tv()

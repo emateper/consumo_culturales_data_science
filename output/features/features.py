@@ -73,8 +73,7 @@ def run_features_pipeline(df_clean: pd.DataFrame, method: str = "onehot", n_comp
     
     categorical_features = [
         "Region", "Genero", "Grupo_Edad", "Nivel_Socioeconomico", 
-        "Estudios_Alcanzados", "Trabajo", "Consumo_Plataformas_Digitales", 
-        "Consumo_Teatro", "Consumo_Musica"
+        "Estudios_Alcanzados", "Trabajo", "Consumo_Plataformas_Digitales", "Consumo_Musica"
     ]
     
     numerical_features = []
@@ -94,20 +93,13 @@ def run_features_pipeline(df_clean: pd.DataFrame, method: str = "onehot", n_comp
     X_transformed = preprocessor.fit_transform(X)
     
     # Obtener nombres de columnas según el método utilizado
-    if method.lower() == "catpca":
-        if isinstance(X_transformed, pd.DataFrame):
-            all_feature_names = X_transformed.columns.tolist()
-        else:
-            n_cols = X_transformed.shape[1]
-            all_feature_names = [f"catpca_{i}" for i in range(n_cols)]
+    if method.lower() == "onehot":
+            feature_names = preprocessor.named_transformers_["cat"].get_feature_names_out(categorical_features)
     else:
-        # OneHotEncoder
-        categorical_names = preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features).tolist()
-        all_feature_names = categorical_names
-    
-    # Convertir a DataFrame con nombres de columnas apropiados
-    df_features = pd.DataFrame(X_transformed, columns=all_feature_names)
-    
+        feature_names = [f"catpca_{i}" for i in range(X_transformed.shape[1])]
+
+    df_features = pd.DataFrame(X_transformed, columns=feature_names)
+
     return df_features
 
 

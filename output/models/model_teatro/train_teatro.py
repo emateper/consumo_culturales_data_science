@@ -42,15 +42,25 @@ def train_teatro():
     df_features = run_features_pipeline(df_clean, method=method, n_components=n_components)
 
     TARGET = "Consumo_Teatro"
+    
+    X = df_features.drop(columns=[TARGET], errors="ignore")
 
-    X = df_features
     y = df_clean[TARGET]
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    model_teatro = RandomForestClassifier(random_state=42)
+    model_teatro = RandomForestClassifier(
+    n_estimators=300,
+    max_depth=8,
+    min_samples_leaf=10,
+    min_samples_split=10,
+    max_features="sqrt",
+    class_weight="balanced",
+    random_state=42,
+    n_jobs=-1
+)
     model_teatro.fit(X_train, y_train)
 
     y_pred = model_teatro.predict(X_test)
@@ -65,3 +75,8 @@ def train_teatro():
     )
 
     return model_teatro
+
+if __name__ == "__main__":
+    train_teatro()
+
+

@@ -8,8 +8,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-data/ # Directorio de datos
-
+data/
 
 # C extensions
 *.so

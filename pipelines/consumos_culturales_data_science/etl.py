@@ -14,7 +14,7 @@ import pandas as pd
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 #ruta del archivo Excel
-DATA_PATH = BASE_DIR / "data" / "0_raw" / "base-datos-encc-2022-2023.xlsx"
+DATA_PATH = BASE_DIR / "data" / "0_external" / "base-datos-encc-2022-2023.xlsx"
 
 #print de verificación para ver donde estoy parado y que la ruta exista
 """print("BASE_DIR:", BASE_DIR)
@@ -172,7 +172,7 @@ TRANSFORMACIONES = [
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-OUTPUT_PATH = BASE_DIR / "data" / "1_interim" / "consumos_culturales_clean.xlsx"
+OUTPUT_PATH = BASE_DIR / "data" / "2_final" / "consumos_culturales_clean.xlsx"
 
 def ejecutar_pipeline(df: pd.DataFrame, pasos: list) -> pd.DataFrame:
     for paso in pasos:

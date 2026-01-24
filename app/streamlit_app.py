@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 import sys
 import plotly.graph_objects as go
-
+import time
 # Configurar página
 st.set_page_config(
     page_title="Data Science App - Consumo de TV y Teatro",
@@ -39,7 +39,7 @@ css_file = BASE_DIR / "app" / "styles.css"
 if css_file.exists():
     with open(css_file, "r", encoding="utf-8") as f:
         css_content = f.read()
-    st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+    st.markdown(f'<style>{css_content} /* {time.time()} */</style>', unsafe_allow_html=True)
 
 
 
@@ -49,6 +49,9 @@ app_mode = st.sidebar.radio(
     "Selecciona una opción:",
     ["Home", "Predicción", "Entrenar Modelo TV", "Entrenar Modelo Teatro", "Métricas del Modelo"]
 )
+
+
+
 
 # ============================================================================
 # HOME
@@ -225,7 +228,7 @@ elif app_mode == "Entrenar Modelo TV":
                     
                     train_tv()
                     st.success("✅ Modelo de TV entrenado exitosamente")
-                    st.balloons()
+                    st.snow()
                 except Exception as e:
                     st.error(f"❌ Error en el entrenamiento: {str(e)}")
 
